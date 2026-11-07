@@ -27,6 +27,7 @@
   "type": "module",
   "scripts": {
     "build": "bun build src/main.ts --target node --outfile dist/wonder-axi.js --banner '#!/usr/bin/env node' && chmod +x dist/wonder-axi.js",
+    "prepack": "bun run build",
     "lint": "oxlint",
     "fmt": "oxfmt --check .",
     "fmt:write": "oxfmt --write .",
@@ -35,17 +36,15 @@
     "test": "vitest run --maxWorkers=2",
     "check": "bun run lint && bun run fmt && bun run typecheck && bun run typecheck:fast && bun run test"
   },
-  "dependencies": {
-    "@effect/platform-node": "4.1.2",
-    "@toon-format/toon": "4.4.0",
-    "effect": "4.1.2"
-  },
   "devDependencies": {
     "@earendil-works/pi-coding-agent": "1.4.0",
+    "@effect/platform-node": "4.1.2",
     "@effect/vitest": "4.1.2",
     "@oxlint/plugins": "1.88.0",
+    "@toon-format/toon": "4.4.0",
     "@types/bun": "1.4.4",
     "@yielded/effect-tsrs": "0.2.0",
+    "effect": "4.1.2",
     "oxfmt": "0.74.0",
     "oxlint": "1.88.0",
     "oxlint-tsgolint": "7.0.2004",
