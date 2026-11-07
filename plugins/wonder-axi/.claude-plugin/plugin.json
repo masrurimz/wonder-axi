@@ -1,0 +1,10 @@
+{
+  "name": "wonder-axi",
+  "version": "0.1.0",
+  "description": "Design on a Wonder canvas, turn code into design, or design into code, using the wonder-axi CLI. Ships one skill and no MCP server.",
+  "author": { "name": "Muhammad Masruri" },
+  "homepage": "https://github.com/masrurimz/wonder-axi",
+  "repository": "https://github.com/masrurimz/wonder-axi",
+  "license": "MIT",
+  "keywords": ["wonder", "design", "axi", "cli"]
+}

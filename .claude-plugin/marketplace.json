@@ -1,0 +1,23 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "wonder-axi",
+  "owner": {
+    "name": "masrurimz"
+  },
+  "metadata": {
+    "description": "Drive Wonder (wonder.design) canvases from a coding agent through a small CLI instead of Wonder's 41 MCP tool schemas."
+  },
+  "plugins": [
+    {
+      "name": "wonder-axi",
+      "description": "Design on a Wonder canvas, turn code into design, or design into code, using the wonder-axi CLI. Ships one skill and no MCP server.",
+      "version": "0.1.0",
+      "author": { "name": "Muhammad Masruri" },
+      "category": "design",
+      "keywords": ["wonder", "design", "axi", "cli"],
+      "license": "MIT",
+      "repository": "https://github.com/masrurimz/wonder-axi",
+      "source": "./plugins/wonder-axi"
+    }
+  ]
+}
