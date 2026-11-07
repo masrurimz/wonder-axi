@@ -4,7 +4,7 @@ A command-line tool that lets coding agents design on a [Wonder](https://wonder.
 
 Wonder's MCP server exposes 41 tools whose schemas total 73.7 KB (about 18k tokens) on every turn. `wonder-axi` wraps that hosted server. The agent runs shell commands and gets compact [TOON](https://github.com/toon-format/toon) output, and reads a tool's guidance only when it needs it. `wonder-axi guide` prints about 4.6 KB and `wonder-axi guide update_elements` about 2.3 KB.
 
-It follows the [AXI](https://axi.md) principles: content-first home view, definitive empty states, structured errors with a `fix:` line, distinct exit codes, next-step hints.
+It follows the [AXI](https://axi.md) principles: content-first home view, definitive empty states, structured errors with a `fix:` line, usage errors distinct from failures by exit code, next-step hints.
 
 ## Install
 
@@ -41,7 +41,7 @@ wonder-axi screenshot <artboardId>
 wonder-axi finish <artboardId>
 ```
 
-`call <tool> [--arg key=value] [--args-json '{}']` reaches any server tool, so new tools work without a release. Commands that take a page use `--page`, else the page selected by `open` or `use`, kept in `$XDG_STATE_HOME/wonder-axi/state.json`. `--json` switches output to JSON. Errors print `error:` and `fix:` on stderr; exit codes are 1 usage, 2 auth, 3 refused by the server, 4 network.
+`call <tool> [--arg key=value] [--args-json '{}']` reaches any server tool, so new tools work without a release. Commands that take a page use `--page`, else the page selected by `open` or `use`, kept in `$XDG_STATE_HOME/wonder-axi/state.json`. `--json` switches output to JSON. Errors print `error:`, `kind:` (usage, auth, refused, network or storage) and `fix:` on stdout; exit code is 2 for usage errors (unknown flag, command or bad arguments), 1 for every other failure, 0 on success. `--version` and `-v` print the bare version.
 
 `screenshot` writes the image under `./.wonder/shots/` and prints only its path, format and size. The default thumbnail is JPEG, `--mode full` is PNG.
 

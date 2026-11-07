@@ -4,5 +4,6 @@ export class AuthError extends Schema.TaggedError<AuthError>()("AuthError", {
   fix: Schema.String,
   message: Schema.String,
 }) {
-  readonly [Runtime.errorExitCode] = 2;
+  readonly kind = "auth";
+  readonly [Runtime.errorExitCode] = 1;
 }

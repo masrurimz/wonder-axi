@@ -7,5 +7,6 @@ export class StorageError extends Schema.TaggedError<StorageError>()(
     message: Schema.String,
   }
 ) {
+  readonly kind = "storage";
   readonly [Runtime.errorExitCode] = 1;
 }

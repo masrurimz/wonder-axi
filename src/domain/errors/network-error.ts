@@ -7,5 +7,6 @@ export class NetworkError extends Schema.TaggedError<NetworkError>()(
     message: Schema.String,
   }
 ) {
-  readonly [Runtime.errorExitCode] = 4;
+  readonly kind = "network";
+  readonly [Runtime.errorExitCode] = 1;
 }

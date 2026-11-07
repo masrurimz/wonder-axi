@@ -1,6 +1,6 @@
 import { NodeServices } from "@effect/platform-node";
 import { Console, Effect, Layer, Schema } from "effect";
-import { CliError, Command } from "effect/cli";
+import { CliError, CliOutput, Command } from "effect/cli";
 import { Digest, SecureRandom } from "effect/crypto";
 import { FetchHttpClient } from "effect/http";
 
@@ -81,9 +81,9 @@ const services = Wonder.layer.pipe(
 );
 
 const reportApp = (error: AppError) =>
-  Console.error(toon({ error: error.message, fix: error.fix })).pipe(
-    Effect.andThen(Effect.fail(error))
-  );
+  Console.log(
+    toon({ error: error.message, fix: error.fix, kind: error.kind })
+  ).pipe(Effect.andThen(Effect.fail(error)));
 
 const isShowHelp = Schema.is(CliError.ShowHelp);
 
@@ -95,10 +95,11 @@ const cliMessage = (error: CliError.CliError): string =>
 const reportCli = (error: CliError.CliError) =>
   isShowHelp(error) && error.errors.length === 0
     ? Effect.void
-    : Console.error(
+    : Console.log(
         toon({
           error: cliMessage(error),
           fix: "Run `wonder-axi --help` or `<command> --help`.",
+          kind: "usage",
         })
       ).pipe(
         Effect.andThen(
@@ -123,5 +124,14 @@ export const program = Command.run(root, {
     UsageError: reportApp,
   }),
   Effect.catchIf(CliError.isCliError, reportCli),
-  Effect.provide(services)
+  Effect.provide(
+    Layer.mergeAll(
+      services,
+      CliOutput.layer(
+        Object.assign(CliOutput.defaultFormatter(), {
+          formatVersion: (_name: string, version: string) => version,
+        })
+      )
+    )
+  )
 );

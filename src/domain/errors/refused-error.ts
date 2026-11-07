@@ -7,5 +7,6 @@ export class RefusedError extends Schema.TaggedError<RefusedError>()(
     message: Schema.String,
   }
 ) {
-  readonly [Runtime.errorExitCode] = 3;
+  readonly kind = "refused";
+  readonly [Runtime.errorExitCode] = 1;
 }

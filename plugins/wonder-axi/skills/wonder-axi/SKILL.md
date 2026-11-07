@@ -34,4 +34,4 @@ Commands that take a page use `--page`, else the page set by `open` or `use`.
 
 - `screenshot` writes the image to disk (`./.wonder/shots/`) and prints its path and size. Open the file to inspect it. Thumbnails come back as JPEG, `--mode full` as PNG.
 - Long text is cut with a hint; `--full` prints all of it.
-- Errors print `error:` and `fix:` on stderr. Exit codes: 1 usage, 2 auth, 3 refused by the server, 4 network. A server refusal names the rule to fix.
+- Errors print `error:`, `kind:` and `fix:` on stdout. Exit codes: 2 usage error, 1 any other failure. A server refusal (`kind: refused`) names the rule to fix.

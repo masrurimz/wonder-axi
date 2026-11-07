@@ -8,7 +8,7 @@ This repo uses Effect 4.1.2 (exact pins). Before writing any Effect code, read `
 
 Architecture rules:
 
-- Failures are `Schema.TaggedError` classes, one per file in `src/domain/errors/`, each carrying a `fix` hint and its exit code through `Runtime.errorExitCode`: 1 usage and storage, 2 auth, 3 refused by the server, 4 network. Errors print as TOON `error:` and `fix:` on stderr.
+- Failures are `Schema.TaggedError` classes, one per file in `src/domain/errors/`, each carrying a `fix` hint, a `kind` (usage, auth, refused, network, storage) and its exit code through `Runtime.errorExitCode`: 2 usage, 1 everything else. Errors print as TOON `error:`, `kind:` and `fix:` on stdout, never stderr. `--version` and `-v` print the bare version.
 - Services are `Context.Service` classes with `static layer`: `Auth` (OAuth code + PKCE, refresh, userinfo), `Wonder` (JSON-RPC over `effect/http`, session, tool calls), `Store` (credentials and state files), `CallbackServer` (loopback login listener).
 - Schema decodes every external value at the boundary: server JSON, credentials, state, OAuth responses.
 - The only runner is `NodeRuntime.runMain` in `src/main.ts`; `Effect.run*` appears nowhere else. No module-level `let`. No `any`.

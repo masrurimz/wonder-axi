@@ -4,5 +4,6 @@ export class UsageError extends Schema.TaggedError<UsageError>()("UsageError", {
   fix: Schema.String,
   message: Schema.String,
 }) {
-  readonly [Runtime.errorExitCode] = 1;
+  readonly kind = "usage";
+  readonly [Runtime.errorExitCode] = 2;
 }
