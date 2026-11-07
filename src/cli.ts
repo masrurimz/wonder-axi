@@ -14,6 +14,7 @@ import {
   files,
   find,
   guide,
+  here,
   icons,
   open,
   skill,
@@ -47,6 +48,7 @@ export const root = Command.make("wonder-axi", { json: jsonFlag }, ({ json }) =>
   Command.withSubcommands([
     files,
     open,
+    here,
     use,
     context,
     skill,

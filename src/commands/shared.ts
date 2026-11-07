@@ -135,11 +135,24 @@ export const readInput = (file: Option.Option<string>) =>
     )
   );
 
-export const lookupAccount = Effect.gen(function* lookup() {
+export const callBasicInfo = Effect.gen(function* basicInfo() {
   const wonder = yield* Wonder;
+  const store = yield* Store;
+  const state = yield* store.readState;
+
+  return yield* wonder.callTool(
+    "get_basic_info",
+    Option.match(state, {
+      onNone: () => ({}),
+      onSome: (current) => ({ pageId: current.pageId }),
+    })
+  );
+});
+
+export const lookupAccount = Effect.gen(function* lookup() {
   const auth = yield* Auth;
 
-  const basic = yield* wonder.callTool("get_basic_info", {}).pipe(
+  const basic = yield* callBasicInfo.pipe(
     Effect.map((result) => {
       const text = textOf(result);
 

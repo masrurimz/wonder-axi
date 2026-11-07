@@ -1,6 +1,7 @@
 import { Option, Result, Schema } from "effect";
 
 import { capped, oneLine, toon } from "./render.ts";
+import type { SessionState } from "./state.ts";
 
 const SECTION_TITLES = [
   "# Basic info",
@@ -49,12 +50,7 @@ const AppContextSchema = Schema.Struct({
     )
   ),
   selectedElements: Schema.optionalKey(
-    Schema.Array(
-      Schema.Struct({
-        dataNodeId: Schema.String,
-        dataNodeLabel: Schema.optionalKey(Schema.String),
-      })
-    )
+    Schema.Array(Schema.Record(Schema.String, Schema.Json))
   ),
 });
 
@@ -108,6 +104,16 @@ const artboardRows = (artboardsText: string) =>
     )
   );
 
+const SELECTION_CAP = 10;
+
+const selectionRow = (
+  element: Readonly<Record<string, Schema.Json>>
+): Schema.JsonObject => {
+  const { dataNodeId, dataNodeLabel, ...rest } = element;
+
+  return { id: dataNodeId ?? null, label: dataNodeLabel ?? "", ...rest };
+};
+
 const describeApp = (info: BasicInfo | undefined) => {
   const app = info?.currentApplicationContext;
 
@@ -125,10 +131,81 @@ const describeApp = (info: BasicInfo | undefined) => {
       id: page.pageId,
       name: page.pageName,
     })),
-    selection: (app?.selectedElements ?? []).map((element) => ({
-      id: element.dataNodeId,
-      label: element.dataNodeLabel ?? "",
-    })),
+    selection: (app?.selectedElements ?? []).map(selectionRow),
+  };
+};
+
+export interface Here {
+  readonly state: SessionState | undefined;
+  readonly summary: Schema.JsonObject;
+}
+
+const sessionOf = (
+  app: BasicInfo["currentApplicationContext"]
+): SessionState | undefined => {
+  if (app?.currentPageId === undefined) {
+    return undefined;
+  }
+
+  const { currentFileId, currentFileName, currentPageId } = app;
+
+  if (currentFileId === undefined || currentFileName === undefined) {
+    return { pageId: currentPageId };
+  }
+
+  return {
+    fileId: currentFileId,
+    fileName: currentFileName,
+    pageId: currentPageId,
+  };
+};
+
+const selectionFields = (
+  selected: readonly Schema.JsonObject[],
+  full: boolean
+): Schema.JsonObject => {
+  if (selected.length === 0) {
+    return { selection: "none" };
+  }
+
+  const shown = full ? selected : selected.slice(0, SELECTION_CAP);
+  const omitted = selected.length - shown.length;
+
+  if (omitted === 0) {
+    return { selectedCount: selected.length, selection: shown };
+  }
+
+  return {
+    selectedCount: selected.length,
+    selection: shown,
+    selectionNote: `${omitted} more. Pass --full for all.`,
+  };
+};
+
+export const describeHere = (
+  info: BasicInfo | undefined,
+  full: boolean
+): Here => {
+  const app = info?.currentApplicationContext;
+
+  if (app?.currentFileId === undefined) {
+    return { state: undefined, summary: { file: "none open in Wonder" } };
+  }
+
+  const place = {
+    file: app.currentFileName ?? null,
+    fileId: app.currentFileId,
+    page: app.currentPageName ?? null,
+    pageId: app.currentPageId ?? null,
+    branch: app.currentBranchName ?? null,
+  };
+
+  return {
+    state: sessionOf(app),
+    summary: Object.assign(
+      place,
+      selectionFields((app.selectedElements ?? []).map(selectionRow), full)
+    ),
   };
 };
 

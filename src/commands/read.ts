@@ -1,13 +1,19 @@
 import { Console, Effect, Match, Option, Schema } from "effect";
 import { Argument, Command, Flag } from "effect/cli";
 
-import { decodeBasicInfo, summarizeContext } from "../domain/context.ts";
+import {
+  decodeBasicInfo,
+  describeHere,
+  summarizeContext,
+} from "../domain/context.ts";
+import type { BasicInfo } from "../domain/context.ts";
 import { UsageError } from "../domain/errors/usage-error.ts";
 import { describeTool, summarizeTools } from "../domain/guide.ts";
 import { oneLine, toon } from "../domain/render.ts";
 import { Store } from "../services/store.ts";
 import { Wonder } from "../services/wonder.ts";
 import {
+  callBasicInfo,
   decodeText,
   emit,
   FilesSchema,
@@ -213,6 +219,41 @@ export const use = Command.make(
     );
   })
 ).pipe(Command.withDescription("Set the current page."));
+
+export const here = Command.make(
+  "here",
+  { full: fullFlag, json: jsonFlag },
+  Effect.fn(function* runHere({ full, json }) {
+    const store = yield* Store;
+
+    const info = yield* callBasicInfo.pipe(
+      Effect.map((result) => decodeBasicInfo(textOf(result))),
+      Effect.catchTag("RefusedError", () =>
+        Effect.succeed(Option.none<BasicInfo>())
+      )
+    );
+
+    const found = describeHere(Option.getOrUndefined(info), full);
+
+    if (found.state !== undefined) {
+      yield* store.writeState(found.state);
+    }
+
+    yield* emit(
+      found.summary,
+      [
+        found.state === undefined
+          ? "Run `wonder-axi files` then `wonder-axi open <id>` to pick a file."
+          : "Run `wonder-axi context` to read this page, or `wonder-axi tree <id>` for a selected element.",
+      ],
+      json
+    );
+  })
+).pipe(
+  Command.withDescription(
+    "Show the file, page and selection open in the Wonder app, and make that page current."
+  )
+);
 
 export const context = Command.make(
   "context",
