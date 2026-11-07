@@ -1,6 +1,6 @@
 # wonder-axi
 
-An [AXI](https://axi.md) CLI that drives Wonder (wonder.design) canvases through Wonder's hosted MCP server at `https://mcp.wonder.so/mcp`. Agents run shell commands and read compact TOON output instead of carrying the server's 41 tool schemas (73.7 KB) in context. Public, MIT. Ships as the npm package `wonder-axi` and as a plugin in this repo (`.claude-plugin/marketplace.json`, `plugins/wonder-axi/`).
+An [AXI](https://axi.md) CLI that drives Wonder (wonder.design) canvases through Wonder's hosted MCP server at `https://mcp.wonder.so/mcp`. Agents run shell commands and read compact TOON output instead of carrying the server's 41 tool schemas (73.7 KB) in context. Public, MIT. Not on npm: install with `npm i -g github:masrurimz/wonder-axi`, which works because `dist/wonder-axi.js` is committed. Also ships as a plugin in this repo (`.claude-plugin/marketplace.json`, `plugins/wonder-axi/`).
 
 ## Effect
 
@@ -27,7 +27,7 @@ bun run typecheck       # effect-tsrs diagnostics --strict
 bun run typecheck:fast  # bun check --no-script --threads 4
 bun run test            # vitest run --maxWorkers=2
 bun run check           # all of the above, in order
-bun run build           # dist/wonder-axi.js, Node >= 20 ESM bundle
+bun run build           # dist/wonder-axi.js, Node >= 20 ESM bundle; commit it with src changes
 ```
 
 On shared machines, wrap heavy runs: `systemd-run --user --scope -p MemoryMax=8G <cmd>`.

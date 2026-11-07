@@ -27,7 +27,6 @@
   "type": "module",
   "scripts": {
     "build": "bun build src/main.ts --target node --outfile dist/wonder-axi.js --banner '#!/usr/bin/env node' && chmod +x dist/wonder-axi.js",
-    "prepack": "bun run build",
     "lint": "oxlint",
     "fmt": "oxfmt --check .",
     "fmt:write": "oxfmt --write .",

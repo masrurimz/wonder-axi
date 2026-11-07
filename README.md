@@ -8,13 +8,14 @@ It follows the [AXI](https://axi.md) principles: content-first home view, defini
 
 ## Install
 
-Needs Node 20 or newer.
+Needs Node 20 or newer. Not published to npm; install from GitHub. The repo commits the built `dist/wonder-axi.js`, so no build tools are needed.
 
 ```sh
-npx -y wonder-axi
+npm i -g github:masrurimz/wonder-axi
+wonder-axi --version
 ```
 
-`bunx wonder-axi` works too. For agent plugins, see [plugins/wonder-axi](plugins/wonder-axi/README.md).
+For agent plugins, see [plugins/wonder-axi](plugins/wonder-axi/README.md).
 
 ## Sign in
 
@@ -29,7 +30,7 @@ Credentials live in `$XDG_CONFIG_HOME/wonder-axi/credentials.json` (mode 0600) a
 ## Use
 
 ```sh
-wonder-axi                     # account, organization, recent files
+wonder-axi here                # the file, page and selection open in Wonder
 wonder-axi files --name card   # find a file
 wonder-axi open <fileId>       # select a file and its landing page
 wonder-axi context             # file, page, artboards, tokens, icons
@@ -41,18 +42,18 @@ wonder-axi screenshot <artboardId>
 wonder-axi finish <artboardId>
 ```
 
-`call <tool> [--arg key=value] [--args-json '{}']` reaches any server tool, so new tools work without a release. Commands that take a page use `--page`, else the page selected by `open` or `use`, kept in `$XDG_STATE_HOME/wonder-axi/state.json`. `--json` switches output to JSON. Errors print `error:`, `kind:` (usage, auth, refused, network or storage) and `fix:` on stdout; exit code is 2 for usage errors (unknown flag, command or bad arguments), 1 for every other failure, 0 on success. `--version` and `-v` print the bare version.
+`call <tool> [--arg key=value] [--args-json '{}']` reaches any server tool, so new tools work without a release. `here` shows where the user is in the Wonder app and sets that page as current. Commands that take a page use `--page`, else the page selected by `here`, `open` or `use`, kept in `$XDG_STATE_HOME/wonder-axi/state.json`. `--json` switches output to JSON. Errors print `error:`, `kind:` (usage, auth, refused, network or storage) and `fix:` on stdout; exit code is 2 for usage errors (unknown flag, command or bad arguments), 1 for every other failure, 0 on success. `--version` and `-v` print the bare version.
 
 `screenshot` writes the image under `./.wonder/shots/` and prints only its path, format and size. The default thumbnail is JPEG, `--mode full` is PNG.
 
 ## Develop
 
-Bun for dev and tests, Node for the published bundle.
+Bun for dev and tests, Node for the bundle.
 
 ```sh
 bun install
 bun run check   # lint, fmt, typecheck, typecheck:fast, test
-bun run build   # dist/wonder-axi.js
+bun run build   # dist/wonder-axi.js, committed so GitHub installs work; rebuild before every commit that changes src/
 ```
 
 See [AGENTS.md](AGENTS.md) for conventions and [PROVENANCE.md](PROVENANCE.md) for borrowed code.
