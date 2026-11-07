@@ -1,6 +1,6 @@
 # wonder-axi
 
-An [AXI](https://axi.md) CLI that drives Wonder (wonder.design) canvases through Wonder's hosted MCP server at `https://mcp.wonder.so/mcp`. Agents run shell commands and read compact TOON output instead of carrying the server's 41 tool schemas (73.7 KB) in context. Public, MIT. Not on npm: install with `npm i -g github:masrurimz/wonder-axi`, which works because `dist/wonder-axi.js` is committed. Also ships as a plugin in this repo (`.claude-plugin/marketplace.json`, `plugins/wonder-axi/`).
+An [AXI](https://axi.md) CLI that drives Wonder (wonder.design) canvases through Wonder's hosted MCP server at `https://mcp.wonder.so/mcp`. Agents run shell commands and read compact TOON output instead of carrying the server's 41 tool schemas (73.7 KB) in context. Public, MIT. Not on npm: install with `npm i -g https://github.com/masrurimz/wonder-axi/archive/refs/heads/master.tar.gz`, which works because `dist/wonder-axi.js` is committed. The `github:masrurimz/wonder-axi` form is broken for global installs on npm 11 (it links a deleted temp clone), so do not document it. Also ships as a plugin in this repo (`.claude-plugin/marketplace.json`, `plugins/wonder-axi/`).
 
 ## Effect
 

@@ -2,7 +2,7 @@
 
 Gives a coding agent the `wonder-axi` skill. The skill teaches the agent to design on a [Wonder](https://wonder.design) canvas through the `wonder-axi` CLI instead of loading Wonder's MCP server, whose 41 tool schemas weigh 73.7 KB on every turn.
 
-The plugin ships a skill only. It has no `.mcp.json`, hooks, or commands. The CLI is not on npm: install it with `npm i -g github:masrurimz/wonder-axi` (Node 20 or newer).
+The plugin ships a skill only. It has no `.mcp.json`, hooks, or commands. The CLI is not on npm: install it with `npm i -g https://github.com/masrurimz/wonder-axi/archive/refs/heads/master.tar.gz` (Node 20 or newer).
 
 ## Install
 

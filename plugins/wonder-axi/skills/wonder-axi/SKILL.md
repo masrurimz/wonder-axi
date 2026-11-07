@@ -5,7 +5,7 @@ description: Wonder canvas design via the wonder-axi CLI. Use to design on a Won
 
 # wonder-axi
 
-`wonder-axi` drives Wonder's hosted MCP server from the shell. Output is compact TOON; `--json` switches to JSON. It is not on npm. Install once with `npm i -g github:masrurimz/wonder-axi` (Node 20+), then run `wonder-axi <command>`.
+`wonder-axi` drives Wonder's hosted MCP server from the shell. Output is compact TOON; `--json` switches to JSON. It is not on npm. Install once with `npm i -g https://github.com/masrurimz/wonder-axi/archive/refs/heads/master.tar.gz` (Node 20+), then run `wonder-axi <command>`.
 
 ## Start here
 

@@ -11,11 +11,11 @@ It follows the [AXI](https://axi.md) principles: content-first home view, defini
 Needs Node 20 or newer. Not published to npm; install from GitHub. The repo commits the built `dist/wonder-axi.js`, so no build tools are needed.
 
 ```sh
-npm i -g github:masrurimz/wonder-axi
+npm i -g https://github.com/masrurimz/wonder-axi/archive/refs/heads/master.tar.gz
 wonder-axi --version
 ```
 
-For agent plugins, see [plugins/wonder-axi](plugins/wonder-axi/README.md).
+The tarball URL is deliberate. `npm i -g github:masrurimz/wonder-axi` leaves a dangling symlink on npm 11. Re-run the same command to update. For agent plugins, see [plugins/wonder-axi](plugins/wonder-axi/README.md).
 
 ## Sign in
 
