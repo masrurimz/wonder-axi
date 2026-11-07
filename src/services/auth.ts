@@ -9,6 +9,7 @@ import {
   needsRefresh,
   RegistrationResponseSchema,
   TokenResponseSchema,
+  UserInfoSchema,
 } from "../domain/credentials.ts";
 import { AuthError } from "../domain/errors/auth-error.ts";
 import type { NetworkError } from "../domain/errors/network-error.ts";
@@ -21,6 +22,7 @@ import {
   redirectUriFor,
   SCOPE,
   TOKEN_URL,
+  USERINFO_URL,
 } from "../domain/oauth.ts";
 import { CallbackServer } from "./callback-server.ts";
 import { send } from "./http-reply.ts";
@@ -69,6 +71,7 @@ export class Auth extends Context.Service<
   {
     readonly accessToken: Effect.Effect<string, TokenFailure>;
     readonly refreshAccessToken: Effect.Effect<string, TokenFailure>;
+    readonly accountEmail: Effect.Effect<Option.Option<string>, TokenFailure>;
     readonly status: Effect.Effect<AuthStatus, TokenFailure>;
     readonly login: (options: {
       readonly port: number;
@@ -303,8 +306,30 @@ export class Auth extends Context.Service<
         };
       });
 
+      const accountEmail = Effect.gen(function* who() {
+        const token = yield* accessToken;
+
+        const reply = yield* send(
+          client,
+          HttpClientRequest.get(USERINFO_URL).pipe(
+            HttpClientRequest.acceptJson,
+            HttpClientRequest.bearerToken(token)
+          ),
+          USERINFO_URL
+        );
+
+        if (reply.status < 200 || reply.status >= 300) {
+          return Option.none<string>();
+        }
+
+        return Schema.decodeUnknownOption(
+          Schema.fromJsonString(UserInfoSchema)
+        )(reply.text).pipe(Option.flatMapNullishOr((info) => info.email));
+      });
+
       return Auth.of({
         accessToken,
+        accountEmail,
         login,
         logout: store.deleteCredentials,
         refreshAccessToken,

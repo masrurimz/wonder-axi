@@ -10,6 +10,8 @@ export const AUTHORIZE_URL = `${AUTH_BASE}/oauth2/authorize`;
 
 export const TOKEN_URL = `${AUTH_BASE}/oauth2/token`;
 
+export const USERINFO_URL = `${AUTH_BASE}/oauth2/userinfo`;
+
 export const SCOPE = "openid email profile offline_access";
 
 export const DEFAULT_PORT = 53_682;

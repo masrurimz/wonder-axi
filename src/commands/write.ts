@@ -3,7 +3,7 @@ import { Argument, Command, Flag } from "effect/cli";
 
 import { RefusedError } from "../domain/errors/refused-error.ts";
 import { splitContent } from "../domain/mcp.ts";
-import { format } from "../domain/render.ts";
+import { format, unwrapTrees } from "../domain/render.ts";
 import { Wonder } from "../services/wonder.ts";
 import { saveImage } from "./images.ts";
 import {
@@ -26,7 +26,7 @@ export const createArtboard = Command.make(
     const code = yield* readInput(file);
     const result = yield* wonder.callTool("create_artboard", { code, pageId });
 
-    yield* printText(textOf(result), full);
+    yield* printText(unwrapTrees(textOf(result)), full);
     yield* Console.log(
       format(
         {},
@@ -53,7 +53,7 @@ export const update = Command.make(
     const edit = yield* readInput(file);
     const result = yield* wonder.callTool("update_elements", { edit, pageId });
 
-    yield* printText(textOf(result), full);
+    yield* printText(unwrapTrees(textOf(result)), full);
   })
 ).pipe(
   Command.withDescription(
@@ -137,6 +137,6 @@ export const finish = Command.make(
   })
 ).pipe(
   Command.withDescription(
-    "Mark an artboard finished and print its design link."
+    "Mark an artboard finished and print the server's reply (a design link when the server has one)."
   )
 );

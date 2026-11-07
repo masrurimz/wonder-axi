@@ -1,5 +1,5 @@
 import { encode } from "@toon-format/toon";
-import type { Schema } from "effect";
+import { Option, Schema } from "effect";
 
 export const DEFAULT_LINE_CAP = 120;
 
@@ -69,4 +69,34 @@ export const oneLine = (text: string, max: number): string => {
   const flat = text.replaceAll(/\s+/gu, " ").trim();
 
   return flat.length <= max ? flat : `${flat.slice(0, max - 1)}…`;
+};
+
+const TreesReplySchema = Schema.Struct({
+  trees: Schema.Array(Schema.String),
+});
+
+const JsonReplySchema = Schema.fromJsonString(
+  Schema.Record(Schema.String, Schema.Unknown)
+);
+
+export const unwrapTrees = (text: string): string => {
+  const reply = Schema.decodeUnknownOption(JsonReplySchema)(text);
+
+  const trees = reply.pipe(
+    Option.flatMap(Schema.decodeUnknownOption(TreesReplySchema))
+  );
+
+  if (Option.isNone(trees) || Option.isNone(reply)) {
+    return text;
+  }
+
+  const rest = Object.fromEntries(
+    Object.entries(reply.value).filter(([key]) => key !== "trees")
+  );
+
+  const body = trees.value.trees.join("\n");
+
+  return Object.keys(rest).length === 0
+    ? body
+    : `${body}\n${JSON.stringify(rest)}`;
 };

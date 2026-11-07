@@ -18,6 +18,7 @@ import { splitContent } from "../domain/mcp.ts";
 import type { ToolResult } from "../domain/mcp.ts";
 import { capped, DEFAULT_LINE_CAP, format } from "../domain/render.ts";
 import type { JsonObject } from "../domain/tool-args.ts";
+import { Auth } from "../services/auth.ts";
 import { Store } from "../services/store.ts";
 import { Wonder } from "../services/wonder.ts";
 
@@ -136,22 +137,32 @@ export const readInput = (file: Option.Option<string>) =>
 
 export const lookupAccount = Effect.gen(function* lookup() {
   const wonder = yield* Wonder;
+  const auth = yield* Auth;
 
-  return yield* wonder.callTool("get_basic_info", {}).pipe(
+  const basic = yield* wonder.callTool("get_basic_info", {}).pipe(
     Effect.map((result) => {
       const text = textOf(result);
-      const info = decodeBasicInfo(text);
 
-      return {
-        email: Option.flatMapNullishOr(info, (basic) => basic.user?.email),
-        info,
-      };
+      return { info: decodeBasicInfo(text), text };
     }),
     Effect.catchTag("RefusedError", (refused) =>
       Effect.succeed({
-        email: accountFromText(refused.message),
         info: Option.none<BasicInfo>(),
+        text: refused.message,
       })
     )
   );
+
+  const direct = yield* auth.accountEmail.pipe(
+    Effect.orElseSucceed(() => Option.none<string>())
+  );
+
+  const email = direct.pipe(
+    Option.orElse(() =>
+      Option.flatMapNullishOr(basic.info, (found) => found.user?.email)
+    ),
+    Option.orElse(() => accountFromText(basic.text))
+  );
+
+  return { email, info: basic.info };
 });

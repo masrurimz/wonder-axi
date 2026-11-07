@@ -4,11 +4,15 @@ import { Argument, Command, Flag } from "effect/cli";
 import { UsageError } from "../domain/errors/usage-error.ts";
 import { splitContent } from "../domain/mcp.ts";
 import { toon } from "../domain/render.ts";
-import { parseArgPairs, parseJsonObject } from "../domain/tool-args.ts";
+import {
+  declaresParam,
+  parseArgPairs,
+  parseJsonObject,
+} from "../domain/tool-args.ts";
 import type { JsonObject } from "../domain/tool-args.ts";
 import { Wonder } from "../services/wonder.ts";
 import { saveImage } from "./images.ts";
-import { fullFlag, printText, readInput } from "./shared.ts";
+import { fullFlag, printText, readInput, resolvePage } from "./shared.ts";
 
 const STDIN = "-";
 
@@ -81,14 +85,23 @@ export const call = Command.make(
       parseJsonObject(yield* readBase(argsJson, argsFile))
     );
 
-    const tools = arg.length === 0 ? [] : yield* wonder.listTools;
+    const tools = yield* wonder.listTools;
 
     const inputSchema = tools.find(
       (candidate) => candidate.name === tool
     )?.inputSchema;
 
     const pairs: JsonObject = yield* orUsage(parseArgPairs(arg, inputSchema));
-    const result = yield* wonder.callTool(tool, { ...base, ...pairs });
+    const supplied: JsonObject = { ...base, ...pairs };
+
+    const wantsPage = declaresParam(inputSchema, "pageId");
+
+    const args: JsonObject =
+      wantsPage && supplied.pageId === undefined
+        ? { ...supplied, pageId: yield* resolvePage(Option.none()) }
+        : supplied;
+
+    const result = yield* wonder.callTool(tool, args);
     const { images, texts } = splitContent(result);
 
     for (const text of texts) {

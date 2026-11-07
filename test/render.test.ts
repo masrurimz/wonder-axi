@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest";
 
-import { capped, firstSentence, format } from "../src/domain/render.ts";
+import {
+  capped,
+  firstSentence,
+  format,
+  unwrapTrees,
+} from "../src/domain/render.ts";
 
 describe("capped", () => {
   it("leaves short text untouched", () => {
@@ -48,5 +53,26 @@ describe("format", () => {
 
   it("emits TOON by default", () => {
     expect(format({ a: 1, b: "x" }, [], false)).toBe("a: 1\nb: x");
+  });
+});
+
+describe("unwrapTrees", () => {
+  it("prints each tree as plain lines instead of an escaped JSON string", () => {
+    const text = JSON.stringify({
+      trees: ["<div>\n  <span/>\n</div>", "<p/>"],
+    });
+
+    expect(unwrapTrees(text)).toBe("<div>\n  <span/>\n</div>\n<p/>");
+  });
+
+  it("keeps other reply fields visible", () => {
+    const text = JSON.stringify({ note: "x", trees: ["<p/>"] });
+
+    expect(unwrapTrees(text)).toBe('<p/>\n{"note":"x"}');
+  });
+
+  it("passes non-tree text through unchanged", () => {
+    expect(unwrapTrees("refused: bad")).toBe("refused: bad");
+    expect(unwrapTrees('{"other":1}')).toBe('{"other":1}');
   });
 });

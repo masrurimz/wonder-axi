@@ -42,6 +42,11 @@ const propertyTypes = (
   );
 };
 
+export const declaresParam = (
+  inputSchema: JsonObject | undefined,
+  name: string
+): boolean => propertyTypes(inputSchema).has(name);
+
 const coerce = (
   key: string,
   raw: string,

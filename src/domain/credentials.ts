@@ -36,6 +36,10 @@ const IdTokenClaimsSchema = Schema.Struct({
   email: Schema.optionalKey(Schema.String),
 });
 
+export const UserInfoSchema = Schema.Struct({
+  email: Schema.optionalKey(Schema.String),
+});
+
 export const needsRefresh = (expiresAt: number, nowMs: number): boolean =>
   nowMs >= expiresAt - REFRESH_WINDOW_MS;
 
